@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "author": "Arash Hatami",
+  "name": "Ping.Sx Overview",
+  "short_name": "Ping.Sx Overview",
+  "version": "1.0.0",
+  "description": "Displays ping statistics for the current Ping.Sx session",
+  "homepage_url": "https://github.com/hatamiarash7/pingsx-overview",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_popup": "modal.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "96": "icons/icon96.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://ping.sx/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "pingsx-overview@arash-hatami.ir"
+    }
+  }
+}
