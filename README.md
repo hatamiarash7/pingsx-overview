@@ -1,6 +1,6 @@
 # ping.sx overview
 
-![GitHub License](https://img.shields.io/github/license/hatamiarash7/pingsx-overview) ![GitHub Release](https://img.shields.io/github/v/release/hatamiarash7/pingsx-overview) ![Mozilla Add-on Version](https://img.shields.io/amo/v/ping-pe-overview)
+![GitHub License](https://img.shields.io/github/license/hatamiarash7/pingsx-overview) ![GitHub Release](https://img.shields.io/github/v/release/hatamiarash7/pingsx-overview) ![Mozilla Add-on Version](https://img.shields.io/amo/v/ping-sx-overview)
 
 It's an Extension to calculate the global latency from all locations of the current [ping.sx](https://ping.sx) page.
 
