@@ -27,7 +27,7 @@ function extractPingData() {
     avg_mean: mean(rows, "avg"),
     best_mean: mean(rows, "best"),
     worst_mean: mean(rows, "wrst"),
-    avg_top5: [...rows].sort((a, b) => b.wrst - a.wrst).slice(0, 5),
+    avg_top5: [...rows].sort((a, b) => b.avg - a.avg).slice(0, 5),
   };
 
   // Send the data to the modal
