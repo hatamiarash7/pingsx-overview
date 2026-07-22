@@ -1,3 +1,7 @@
+// Wrapped in an IIFE because the popup re-injects this file into the same
+// isolated world on every open/refresh; top-level declarations would
+// otherwise throw "Identifier already declared" on the second run.
+(() => {
 // Known aliases for each metric column. The table is matched by header
 // text so a layout change on ping.sx doesn't silently read the wrong
 // columns; the numbers in the array are the historical fallback indices.
@@ -123,3 +127,4 @@ if (!window.__pingsxWatching) {
   window.__pingsxWatching = true;
   watchForUpdates();
 }
+})();
