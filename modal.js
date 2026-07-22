@@ -4,11 +4,22 @@ let latestData = null;
 // Inject the content script into the active tab to (re)compute stats.
 function requestStats() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (!tabs[0]) return;
-    chrome.scripting.executeScript({
-      target: { tabId: tabs[0].id },
-      files: ["content.js"],
-    });
+    const tab = tabs[0];
+
+    // Restricted pages (chrome://, the web store, the new-tab page, …)
+    // can't be scripted, so injecting there throws. Guard for a normal
+    // web page and show guidance instead of failing silently.
+    if (!tab || !tab.url || !/^https?:/.test(tab.url)) {
+      showMessage("not_ping");
+      return;
+    }
+
+    chrome.scripting
+      .executeScript({
+        target: { tabId: tab.id },
+        files: ["content.js"],
+      })
+      .catch(() => showMessage("not_ping"));
   });
 }
 
