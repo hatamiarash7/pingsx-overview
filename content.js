@@ -1,4 +1,10 @@
 function extractPingData() {
+  // Bail out early when the popup is opened on a page that isn't ping.sx.
+  if (location.hostname !== "ping.sx") {
+    chrome.runtime.sendMessage({ action: "showModal", status: "not_ping" });
+    return;
+  }
+
   const rows = [];
 
   document.querySelectorAll("tbody tr").forEach((tr) => {
@@ -18,11 +24,18 @@ function extractPingData() {
     }
   });
 
+  // No results have streamed in yet (or the page has none).
+  if (rows.length === 0) {
+    chrome.runtime.sendMessage({ action: "showModal", status: "empty" });
+    return;
+  }
+
   // mean calculator
   const mean = (arr, key) =>
     arr.reduce((sum, r) => sum + r[key], 0) / arr.length;
 
   const data = {
+    count: rows.length,
     last_mean: mean(rows, "last"),
     avg_mean: mean(rows, "avg"),
     best_mean: mean(rows, "best"),
@@ -31,7 +44,7 @@ function extractPingData() {
   };
 
   // Send the data to the modal
-  chrome.runtime.sendMessage({ action: "showModal", data });
+  chrome.runtime.sendMessage({ action: "showModal", status: "ok", data });
 }
 
 // Run the extraction when the extension icon is clicked
