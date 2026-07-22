@@ -109,13 +109,20 @@ function send(message) {
 }
 
 // Recompute whenever ping.sx appends or updates a result row, so the
-// popup reflects locations as they stream in rather than a single
-// early snapshot. Debounced to coalesce bursts of DOM mutations.
+// popup reflects locations as they stream in rather than a single early
+// snapshot. Throttled rather than debounced: ping.sx mutates the table
+// continuously while results arrive, so a trailing debounce would keep
+// resetting and never fire until the stream paused. This guarantees an
+// update at most every 500ms even during a steady stream.
 function watchForUpdates() {
-  let timer = null;
+  let scheduled = false;
   const observer = new MutationObserver(() => {
-    clearTimeout(timer);
-    timer = setTimeout(extractPingData, 300);
+    if (scheduled) return;
+    scheduled = true;
+    setTimeout(() => {
+      scheduled = false;
+      extractPingData();
+    }, 500);
   });
   observer.observe(document.body, { childList: true, subtree: true });
 }
