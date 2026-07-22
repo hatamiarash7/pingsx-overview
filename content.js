@@ -1,3 +1,32 @@
+// Known aliases for each metric column. The table is matched by header
+// text so a layout change on ping.sx doesn't silently read the wrong
+// columns; the numbers in the array are the historical fallback indices.
+const COLUMNS = {
+  location: { aliases: ["location", "node"], fallback: 0 },
+  last: { aliases: ["last"], fallback: 5 },
+  avg: { aliases: ["avg", "average"], fallback: 6 },
+  best: { aliases: ["best", "min"], fallback: 7 },
+  wrst: { aliases: ["wrst", "worst", "max"], fallback: 8 },
+  stdev: { aliases: ["stdev", "std", "mdev"], fallback: 9 },
+};
+
+// Build a { metric: columnIndex } map from the table header row, falling
+// back to the historical fixed indices when a header can't be matched.
+function resolveColumns() {
+  const headers = [...document.querySelectorAll("thead th")].map((th) =>
+    th.innerText.trim().toLowerCase()
+  );
+
+  const map = {};
+  for (const [key, { aliases, fallback }] of Object.entries(COLUMNS)) {
+    const index = headers.findIndex((h) =>
+      aliases.some((alias) => h.includes(alias))
+    );
+    map[key] = index === -1 ? fallback : index;
+  }
+  return map;
+}
+
 function extractPingData() {
   // Bail out early when the popup is opened on a page that isn't ping.sx.
   if (location.hostname !== "ping.sx") {
@@ -5,18 +34,21 @@ function extractPingData() {
     return;
   }
 
+  const cols = resolveColumns();
   const rows = [];
 
   document.querySelectorAll("tbody tr").forEach((tr) => {
     const tds = tr.querySelectorAll("td");
     if (tds.length < 11) return; // skip malformed rows
 
-    const location = tds[0].innerText.trim();
-    const last = parseFloat(tds[5].innerText.trim());
-    const avg = parseFloat(tds[6].innerText.trim());
-    const best = parseFloat(tds[7].innerText.trim());
-    const wrst = parseFloat(tds[8].innerText.trim());
-    const stdev = parseFloat(tds[9].innerText.trim());
+    const cell = (key) => tds[cols[key]] && tds[cols[key]].innerText.trim();
+
+    const location = cell("location");
+    const last = parseFloat(cell("last"));
+    const avg = parseFloat(cell("avg"));
+    const best = parseFloat(cell("best"));
+    const wrst = parseFloat(cell("wrst"));
+    const stdev = parseFloat(cell("stdev"));
 
     // push only if valid numeric values
     if ([last, avg, best, wrst, stdev].every((n) => !isNaN(n))) {
