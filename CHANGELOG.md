@@ -4,6 +4,7 @@
 
 ### Added
 
+- Save a run as a baseline and compare later runs against it, with per-metric and per-location deltas.
 - Switch the highest-latency list between the top 5, 10, or 15 locations, remembered across sessions.
 - Live statistics that update automatically as ping results stream in.
 - Median and p95 of the average latency alongside the existing means.

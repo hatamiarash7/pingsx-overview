@@ -23,6 +23,7 @@
           <div class="hero-value">
             <span id="avg-mean">0.00</span><span class="unit">ms</span>
           </div>
+          <div class="hero-delta" id="hero-delta" hidden></div>
           <div class="hero-sub">
             median <b id="avg-median">–</b> · p95 <b id="avg-p95">–</b>
           </div>
@@ -32,20 +33,23 @@
           <div class="tile">
             <span class="tile-label">Last</span>
             <span class="tile-value" id="last-mean">–</span>
+            <span class="tile-delta" id="last-delta" hidden></span>
           </div>
           <div class="tile">
             <span class="tile-label">Best</span>
             <span class="tile-value" id="best-mean">–</span>
+            <span class="tile-delta" id="best-delta" hidden></span>
           </div>
           <div class="tile">
             <span class="tile-label">Worst</span>
             <span class="tile-value" id="worst-mean">–</span>
+            <span class="tile-delta" id="worst-delta" hidden></span>
           </div>
         </section>
 
         <section class="top5">
           <div class="top5-head">
-            <h2>Highest latency</h2>
+            <h2 id="top5-heading">Highest latency</h2>
             <div class="segmented" id="top-count" role="tablist" aria-label="Number of locations to show">
               <button type="button" data-count="5" class="active" role="tab" aria-selected="true">5</button>
               <button type="button" data-count="10" role="tab" aria-selected="false">10</button>
@@ -54,10 +58,20 @@
           </div>
           <ul id="top5-list"></ul>
         </section>
+
+        <div id="compare-bar" hidden>
+          <label class="compare-toggle">
+            <input type="checkbox" id="compare-check" />
+            <span>Compare</span>
+          </label>
+          <span id="baseline-age"></span>
+          <button id="clear-baseline" type="button" title="Discard baseline">✕</button>
+        </div>
       </main>
 
       <div id="toolbar">
-        <button id="refresh" type="button" title="Recompute now">↻ Refresh</button>
+        <button id="refresh" type="button" title="Recompute now">↻</button>
+        <button id="save-baseline" type="button" title="Save the current run as a baseline">Save</button>
         <button id="export-csv" type="button" title="Download per-location data">CSV</button>
         <button id="export-json" type="button" title="Download per-location data">JSON</button>
       </div>
