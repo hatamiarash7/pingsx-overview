@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "description": "Displays ping statistics for the current Ping.Sx session",
   "homepage_url": "https://github.com/hatamiarash7/pingsx-overview",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "storage"],
   "action": {
     "default_popup": "modal.html"
   },

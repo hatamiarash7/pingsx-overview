@@ -26,9 +26,6 @@ function requestStats() {
   });
 }
 
-// Inject once when the popup opens.
-requestStats();
-
 // Listen for messages from the content script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action !== "showModal") return;
@@ -122,20 +119,31 @@ function renderTopList() {
   });
 }
 
-// Switch how many locations the list shows.
-document.getElementById("top-count").addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-count]");
-  if (!button) return;
+// Select how many locations the list shows, sync the segmented control,
+// re-render, and optionally remember the choice for next time.
+const PRESETS = [5, 10, 15];
 
-  topCount = parseInt(button.dataset.count, 10);
+function setTopCount(count, persist) {
+  topCount = PRESETS.includes(count) ? count : 5;
 
-  for (const b of event.currentTarget.children) {
-    const active = b === button;
+  for (const b of document.getElementById("top-count").children) {
+    const active = parseInt(b.dataset.count, 10) === topCount;
     b.classList.toggle("active", active);
     b.setAttribute("aria-selected", active ? "true" : "false");
   }
 
   renderTopList();
+  if (persist) chrome.storage.local.set({ topCount });
+}
+
+document.getElementById("top-count").addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-count]");
+  if (button) setTopCount(parseInt(button.dataset.count, 10), true);
+});
+
+// Restore the saved preset (defaults to 5) before the first render.
+chrome.storage.local.get({ topCount: 5 }, (stored) => {
+  setTopCount(stored.topCount, false);
 });
 
 // Trigger a browser download for the given text content.
@@ -166,3 +174,7 @@ function exportJson() {
 document.getElementById("refresh").addEventListener("click", requestStats);
 document.getElementById("export-csv").addEventListener("click", exportCsv);
 document.getElementById("export-json").addEventListener("click", exportJson);
+
+// Inject only after the message listener is registered, so the content
+// script's first snapshot is never missed.
+requestStats();
