@@ -36,10 +36,18 @@ const STATUS_MESSAGES = {
 // Toggle between the stats view and a centered status message.
 function showMessage(status) {
   document.getElementById("stats-view").hidden = true;
+  document.getElementById("count-badge").hidden = true;
 
   const messageEl = document.getElementById("message");
   messageEl.hidden = false;
   messageEl.textContent = STATUS_MESSAGES[status] || STATUS_MESSAGES.error;
+}
+
+// Classify a latency value so it can be colour-coded in the UI.
+function health(ms) {
+  if (ms < 100) return "good";
+  if (ms < 250) return "warn";
+  return "bad";
 }
 
 // Render the computed statistics into the popup.
@@ -47,29 +55,44 @@ function showStats(data) {
   document.getElementById("message").hidden = true;
   document.getElementById("stats-view").hidden = false;
 
-  document.getElementById("count").textContent = data.count;
-  document.getElementById("last-mean").textContent = data.last_mean.toFixed(2);
-  document.getElementById("avg-mean").textContent = data.avg_mean.toFixed(2);
+  const badge = document.getElementById("count-badge");
+  badge.hidden = false;
+  badge.textContent = `${data.count} nodes`;
+
+  const hero = document.getElementById("avg-mean");
+  hero.textContent = data.avg_mean.toFixed(2);
+  hero.parentElement.className = "hero-value " + health(data.avg_mean);
+
   document.getElementById("avg-median").textContent = data.avg_median.toFixed(2);
   document.getElementById("avg-p95").textContent = data.avg_p95.toFixed(2);
+  document.getElementById("last-mean").textContent = data.last_mean.toFixed(2);
   document.getElementById("best-mean").textContent = data.best_mean.toFixed(2);
   document.getElementById("worst-mean").textContent = data.worst_mean.toFixed(2);
 
-  const tbody = document.querySelector("#top5-table tbody");
+  const list = document.getElementById("top5-list");
+  const scale = data.avg_top5[0] ? data.avg_top5[0].avg : 1;
 
-  tbody.innerHTML = "";
+  list.innerHTML = "";
   data.avg_top5.forEach((item) => {
-    const row = document.createElement("tr");
+    const li = document.createElement("li");
 
-    const locationCell = document.createElement("td");
-    locationCell.textContent = item.location; // Safe assignment
-    row.appendChild(locationCell);
+    const loc = document.createElement("span");
+    loc.className = "loc";
+    loc.textContent = item.location;
 
-    const valueCell = document.createElement("td");
-    valueCell.textContent = item.avg.toFixed(2); // Safe assignment
-    row.appendChild(valueCell);
+    const val = document.createElement("span");
+    val.className = "val";
+    val.textContent = `${item.avg.toFixed(2)} ms`;
 
-    tbody.appendChild(row);
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    const fill = document.createElement("span");
+    fill.className = health(item.avg);
+    fill.style.width = Math.max(4, (item.avg / scale) * 100) + "%";
+    bar.appendChild(fill);
+
+    li.append(loc, val, bar);
+    list.appendChild(li);
   });
 }
 

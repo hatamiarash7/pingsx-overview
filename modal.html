@@ -5,37 +5,53 @@
     <link rel="stylesheet" href="modal.css" />
   </head>
   <body>
-    <div id="modal">
-      <h1>Ping.Sx Statistics</h1>
+    <div id="app">
+      <header>
+        <div class="brand">
+          <span class="pulse" aria-hidden="true"></span>
+          <span>Ping.sx Overview</span>
+        </div>
+        <span id="count-badge" class="badge" hidden></span>
+      </header>
 
       <p id="message">Waiting for ping results…</p>
 
-      <div id="stats-view" hidden>
-      <p id="summary"><span id="count"></span> locations</p>
-      <div id="stats">
-        <p><strong>Mean of Last:</strong> <span id="last-mean"></span></p>
-        <p><strong>Mean of Avg:</strong> <span id="avg-mean"></span></p>
-        <p><strong>Median of Avg:</strong> <span id="avg-median"></span></p>
-        <p><strong>p95 of Avg:</strong> <span id="avg-p95"></span></p>
-        <p><strong>Mean of Best:</strong> <span id="best-mean"></span></p>
-        <p><strong>Mean of Worst:</strong> <span id="worst-mean"></span></p>
-      </div>
-      <h2>Top 5 Highest Latency</h2>
-      <table id="top5-table">
-        <thead>
-          <tr>
-            <th>Location</th>
-            <th>Avg (ms)</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      </div>
+      <main id="stats-view" hidden>
+        <section class="hero">
+          <span class="hero-label">Global average latency</span>
+          <div class="hero-value">
+            <span id="avg-mean">0.00</span><span class="unit">ms</span>
+          </div>
+          <div class="hero-sub">
+            median <b id="avg-median">–</b> · p95 <b id="avg-p95">–</b>
+          </div>
+        </section>
+
+        <section class="tiles">
+          <div class="tile">
+            <span class="tile-label">Last</span>
+            <span class="tile-value" id="last-mean">–</span>
+          </div>
+          <div class="tile">
+            <span class="tile-label">Best</span>
+            <span class="tile-value" id="best-mean">–</span>
+          </div>
+          <div class="tile">
+            <span class="tile-label">Worst</span>
+            <span class="tile-value" id="worst-mean">–</span>
+          </div>
+        </section>
+
+        <section class="top5">
+          <h2>Highest latency</h2>
+          <ul id="top5-list"></ul>
+        </section>
+      </main>
 
       <div id="toolbar">
-        <button id="refresh" type="button">Refresh</button>
-        <button id="export-csv" type="button">Export CSV</button>
-        <button id="export-json" type="button">Export JSON</button>
+        <button id="refresh" type="button" title="Recompute now">↻ Refresh</button>
+        <button id="export-csv" type="button" title="Download per-location data">CSV</button>
+        <button id="export-json" type="button" title="Download per-location data">JSON</button>
       </div>
     </div>
     <script src="modal.js"></script>
