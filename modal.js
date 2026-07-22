@@ -1,6 +1,9 @@
 // The most recent dataset, kept so the export buttons have data to work with.
 let latestData = null;
 
+// How many locations the "Highest latency" list shows (5 / 10 / 15).
+let topCount = 5;
+
 // Inject the content script into the active tab to (re)compute stats.
 function requestStats() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -80,11 +83,23 @@ function showStats(data) {
   document.getElementById("best-mean").textContent = data.best_mean.toFixed(2);
   document.getElementById("worst-mean").textContent = data.worst_mean.toFixed(2);
 
+  renderTopList();
+}
+
+// Render the N highest-latency locations from the latest dataset. Slicing
+// happens here (not in the content script) so switching presets is instant
+// and doesn't need a re-scrape.
+function renderTopList() {
+  if (!latestData) return;
+
   const list = document.getElementById("top5-list");
-  const scale = data.avg_top5[0] ? data.avg_top5[0].avg : 1;
+  const top = [...latestData.rows]
+    .sort((a, b) => b.avg - a.avg)
+    .slice(0, topCount);
+  const scale = top[0] ? top[0].avg : 1;
 
   list.innerHTML = "";
-  data.avg_top5.forEach((item) => {
+  top.forEach((item) => {
     const li = document.createElement("li");
 
     const loc = document.createElement("span");
@@ -106,6 +121,22 @@ function showStats(data) {
     list.appendChild(li);
   });
 }
+
+// Switch how many locations the list shows.
+document.getElementById("top-count").addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-count]");
+  if (!button) return;
+
+  topCount = parseInt(button.dataset.count, 10);
+
+  for (const b of event.currentTarget.children) {
+    const active = b === button;
+    b.classList.toggle("active", active);
+    b.setAttribute("aria-selected", active ? "true" : "false");
+  }
+
+  renderTopList();
+});
 
 // Trigger a browser download for the given text content.
 function download(filename, mime, content) {

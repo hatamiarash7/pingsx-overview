@@ -44,7 +44,14 @@
         </section>
 
         <section class="top5">
-          <h2>Highest latency</h2>
+          <div class="top5-head">
+            <h2>Highest latency</h2>
+            <div class="segmented" id="top-count" role="tablist" aria-label="Number of locations to show">
+              <button type="button" data-count="5" class="active" role="tab" aria-selected="true">5</button>
+              <button type="button" data-count="10" role="tab" aria-selected="false">10</button>
+              <button type="button" data-count="15" role="tab" aria-selected="false">15</button>
+            </div>
+          </div>
           <ul id="top5-list"></ul>
         </section>
       </main>

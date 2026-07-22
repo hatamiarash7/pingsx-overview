@@ -4,6 +4,7 @@
 
 ### Added
 
+- Switch the highest-latency list between the top 5, 10, or 15 locations.
 - Live statistics that update automatically as ping results stream in.
 - Median and p95 of the average latency alongside the existing means.
 - Manual refresh button and CSV/JSON export of the per-location data.
