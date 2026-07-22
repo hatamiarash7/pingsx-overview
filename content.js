@@ -27,6 +27,20 @@ function resolveColumns() {
   return map;
 }
 
+// Arithmetic mean of a numeric array.
+const mean = (values) =>
+  values.reduce((sum, n) => sum + n, 0) / values.length;
+
+// Linear-interpolated percentile (p in 0..100) of a numeric array.
+function percentile(values, p) {
+  const sorted = [...values].sort((a, b) => a - b);
+  if (sorted.length === 1) return sorted[0];
+  const rank = (p / 100) * (sorted.length - 1);
+  const low = Math.floor(rank);
+  const high = Math.ceil(rank);
+  return sorted[low] + (sorted[high] - sorted[low]) * (rank - low);
+}
+
 function extractPingData() {
   // Bail out early when the popup is opened on a page that isn't ping.sx.
   if (location.hostname !== "ping.sx") {
@@ -62,17 +76,18 @@ function extractPingData() {
     return;
   }
 
-  // mean calculator
-  const mean = (arr, key) =>
-    arr.reduce((sum, r) => sum + r[key], 0) / arr.length;
+  const avgValues = rows.map((r) => r.avg);
 
   const data = {
     count: rows.length,
-    last_mean: mean(rows, "last"),
-    avg_mean: mean(rows, "avg"),
-    best_mean: mean(rows, "best"),
-    worst_mean: mean(rows, "wrst"),
+    last_mean: mean(rows.map((r) => r.last)),
+    avg_mean: mean(avgValues),
+    best_mean: mean(rows.map((r) => r.best)),
+    worst_mean: mean(rows.map((r) => r.wrst)),
+    avg_median: percentile(avgValues, 50),
+    avg_p95: percentile(avgValues, 95),
     avg_top5: [...rows].sort((a, b) => b.avg - a.avg).slice(0, 5),
+    rows,
   };
 
   // Send the data to the modal

@@ -15,12 +15,6 @@
     "48": "icons/icon48.png",
     "96": "icons/icon96.png"
   },
-  "content_scripts": [
-    {
-      "matches": ["*://ping.sx/*"],
-      "js": ["content.js"]
-    }
-  ],
   "browser_specific_settings": {
     "gecko": {
       "id": "pingsx-overview@arash-hatami.ir"

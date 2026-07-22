@@ -89,3 +89,31 @@ p {
 #top5-table tr:hover td {
   background-color: #333;
 }
+
+/* Toolbar */
+#toolbar {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+#toolbar button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  background-color: #46bea0;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#toolbar button:hover {
+  background-color: #3aa88c;
+}
+
+#message {
+  text-align: center;
+  color: #ccc;
+  padding: 20px 0;
+}

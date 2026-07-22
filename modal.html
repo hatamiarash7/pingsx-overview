@@ -11,9 +11,12 @@
       <p id="message">Waiting for ping results…</p>
 
       <div id="stats-view" hidden>
+      <p id="summary"><span id="count"></span> locations</p>
       <div id="stats">
         <p><strong>Mean of Last:</strong> <span id="last-mean"></span></p>
         <p><strong>Mean of Avg:</strong> <span id="avg-mean"></span></p>
+        <p><strong>Median of Avg:</strong> <span id="avg-median"></span></p>
+        <p><strong>p95 of Avg:</strong> <span id="avg-p95"></span></p>
         <p><strong>Mean of Best:</strong> <span id="best-mean"></span></p>
         <p><strong>Mean of Worst:</strong> <span id="worst-mean"></span></p>
       </div>
@@ -27,6 +30,12 @@
         </thead>
         <tbody></tbody>
       </table>
+      </div>
+
+      <div id="toolbar">
+        <button id="refresh" type="button">Refresh</button>
+        <button id="export-csv" type="button">Export CSV</button>
+        <button id="export-json" type="button">Export JSON</button>
       </div>
     </div>
     <script src="modal.js"></script>
