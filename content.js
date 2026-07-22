@@ -30,7 +30,7 @@ function resolveColumns() {
 function extractPingData() {
   // Bail out early when the popup is opened on a page that isn't ping.sx.
   if (location.hostname !== "ping.sx") {
-    chrome.runtime.sendMessage({ action: "showModal", status: "not_ping" });
+    send({ action: "showModal", status: "not_ping" });
     return;
   }
 
@@ -58,7 +58,7 @@ function extractPingData() {
 
   // No results have streamed in yet (or the page has none).
   if (rows.length === 0) {
-    chrome.runtime.sendMessage({ action: "showModal", status: "empty" });
+    send({ action: "showModal", status: "empty" });
     return;
   }
 
@@ -76,8 +76,35 @@ function extractPingData() {
   };
 
   // Send the data to the modal
-  chrome.runtime.sendMessage({ action: "showModal", status: "ok", data });
+  send({ action: "showModal", status: "ok", data });
 }
 
-// Run the extraction when the extension icon is clicked
+// The popup may be closed while the observer is still running, which
+// leaves no receiver; swallow that expected error.
+function send(message) {
+  try {
+    chrome.runtime.sendMessage(message).catch(() => {});
+  } catch (_) {
+    /* ignore */
+  }
+}
+
+// Recompute whenever ping.sx appends or updates a result row, so the
+// popup reflects locations as they stream in rather than a single
+// early snapshot. Debounced to coalesce bursts of DOM mutations.
+function watchForUpdates() {
+  let timer = null;
+  const observer = new MutationObserver(() => {
+    clearTimeout(timer);
+    timer = setTimeout(extractPingData, 300);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+// The script is re-injected every time the popup opens; only wire up the
+// observer once, but always emit a fresh snapshot.
 extractPingData();
+if (!window.__pingsxWatching) {
+  window.__pingsxWatching = true;
+  watchForUpdates();
+}
