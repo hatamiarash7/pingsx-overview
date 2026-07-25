@@ -54,9 +54,15 @@ header {
 }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(70, 190, 160, 0.5); }
-  70% { box-shadow: 0 0 0 7px rgba(70, 190, 160, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(70, 190, 160, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(70, 190, 160, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(70, 190, 160, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(70, 190, 160, 0);
+  }
 }
 
 .badge {
@@ -103,8 +109,12 @@ header {
   color: var(--good);
 }
 
-.hero-value.warn { color: var(--warn); }
-.hero-value.bad { color: var(--bad); }
+.hero-value.warn {
+  color: var(--warn);
+}
+.hero-value.bad {
+  color: var(--bad);
+}
 
 .hero-value .unit {
   font-size: 15px;
@@ -245,7 +255,9 @@ header {
   padding: 3px 10px;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .segmented button:hover {
@@ -324,8 +336,12 @@ header {
   background: var(--good);
 }
 
-.bar > span.warn { background: var(--warn); }
-.bar > span.bad { background: var(--bad); }
+.bar > span.warn {
+  background: var(--warn);
+}
+.bar > span.bad {
+  background: var(--bad);
+}
 
 /* Compare bar */
 #compare-bar {
@@ -391,7 +407,9 @@ header {
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 
 #toolbar button:hover {
