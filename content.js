@@ -59,17 +59,17 @@ function extractPingData() {
     const tds = tr.querySelectorAll("td");
     if (tds.length < 11) return; // skip malformed rows
 
-    const cell = (key) => tds[cols[key]] && tds[cols[key]].innerText.trim();
+    const cell = (key) => tds[cols[key]]?.innerText.trim();
 
     const location = cell("location");
-    const last = parseFloat(cell("last"));
-    const avg = parseFloat(cell("avg"));
-    const best = parseFloat(cell("best"));
-    const wrst = parseFloat(cell("wrst"));
-    const stdev = parseFloat(cell("stdev"));
+    const last = Number.parseFloat(cell("last"));
+    const avg = Number.parseFloat(cell("avg"));
+    const best = Number.parseFloat(cell("best"));
+    const wrst = Number.parseFloat(cell("wrst"));
+    const stdev = Number.parseFloat(cell("stdev"));
 
     // push only if valid numeric values
-    if ([last, avg, best, wrst, stdev].every((n) => !isNaN(n))) {
+    if ([last, avg, best, wrst, stdev].every((n) => !Number.isNaN(n))) {
       rows.push({ location, last, avg, best, wrst, stdev });
     }
   });

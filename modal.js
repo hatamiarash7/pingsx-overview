@@ -16,7 +16,7 @@ function requestStats() {
     // Restricted pages (chrome://, the web store, the new-tab page, …)
     // can't be scripted, so injecting there throws. Guard for a normal
     // web page and show guidance instead of failing silently.
-    if (!tab || !tab.url || !/^https?:/.test(tab.url)) {
+    if (!tab?.url || !/^https?:/.test(tab.url)) {
       showMessage("not_ping");
       return;
     }
@@ -84,14 +84,15 @@ function setDelta(id, current, base, suffix) {
   el.hidden = false;
 
   if (Math.abs(diff) < 0.5) {
-    el.className = el.className.replace(/\b(good|bad|neutral)\b/g, "").trim() +
-      " neutral";
+    el.className =
+      el.className.replace(/\b(good|bad|neutral)\b/g, "").trim() + " neutral";
     el.textContent = "±0" + (suffix || "");
     return;
   }
 
   const improved = diff < 0;
-  el.className = el.className.replace(/\b(good|bad|neutral)\b/g, "").trim() +
+  el.className =
+    el.className.replace(/\b(good|bad|neutral)\b/g, "").trim() +
     (improved ? " good" : " bad");
   el.textContent =
     (improved ? "▼ " : "▲ ") + Math.abs(diff).toFixed(1) + (suffix || "");
@@ -110,17 +111,19 @@ function showStats(data) {
   hero.textContent = data.avg_mean.toFixed(2);
   hero.parentElement.className = "hero-value " + health(data.avg_mean);
 
-  document.getElementById("avg-median").textContent = data.avg_median.toFixed(2);
+  document.getElementById("avg-median").textContent =
+    data.avg_median.toFixed(2);
   document.getElementById("avg-p95").textContent = data.avg_p95.toFixed(2);
   document.getElementById("last-mean").textContent = data.last_mean.toFixed(2);
   document.getElementById("best-mean").textContent = data.best_mean.toFixed(2);
-  document.getElementById("worst-mean").textContent = data.worst_mean.toFixed(2);
+  document.getElementById("worst-mean").textContent =
+    data.worst_mean.toFixed(2);
 
   const base = activeBaseline();
-  setDelta("hero-delta", data.avg_mean, base && base.avg_mean, " vs baseline");
-  setDelta("last-delta", data.last_mean, base && base.last_mean);
-  setDelta("best-delta", data.best_mean, base && base.best_mean);
-  setDelta("worst-delta", data.worst_mean, base && base.worst_mean);
+  setDelta("hero-delta", data.avg_mean, base?.avg_mean, " vs baseline");
+  setDelta("last-delta", data.last_mean, base?.last_mean);
+  setDelta("best-delta", data.best_mean, base?.best_mean);
+  setDelta("worst-delta", data.worst_mean, base?.worst_mean);
 
   document.getElementById("top5-heading").textContent = base
     ? "Biggest changes"
@@ -231,7 +234,12 @@ function compareEntries(current, baseRows) {
 
   for (const b of baseRows) {
     if (!currentByLoc.has(b.location)) {
-      entries.push({ location: b.location, avg: null, delta: null, tag: "gone" });
+      entries.push({
+        location: b.location,
+        avg: null,
+        delta: null,
+        tag: "gone",
+      });
     }
   }
 
@@ -242,13 +250,13 @@ function compareEntries(current, baseRows) {
 
 // --- List size preset --------------------------------------------------
 
-const PRESETS = [5, 10, 15];
+const PRESETS = new Set([5, 10, 15]);
 
 function setTopCount(count, persist) {
-  topCount = PRESETS.includes(count) ? count : 5;
+  topCount = PRESETS.has(count) ? count : 5;
 
   for (const b of document.getElementById("top-count").children) {
-    const active = parseInt(b.dataset.count, 10) === topCount;
+    const active = Number.parseInt(b.dataset.count, 10) === topCount;
     b.classList.toggle("active", active);
     b.setAttribute("aria-selected", active ? "true" : "false");
   }
@@ -259,7 +267,7 @@ function setTopCount(count, persist) {
 
 document.getElementById("top-count").addEventListener("click", (event) => {
   const button = event.target.closest("button[data-count]");
-  if (button) setTopCount(parseInt(button.dataset.count, 10), true);
+  if (button) setTopCount(Number.parseInt(button.dataset.count, 10), true);
 });
 
 // --- Snapshot & compare ------------------------------------------------
@@ -304,8 +312,12 @@ function clearBaseline() {
   refreshCompareUI();
 }
 
-document.getElementById("save-baseline").addEventListener("click", saveBaseline);
-document.getElementById("clear-baseline").addEventListener("click", clearBaseline);
+document
+  .getElementById("save-baseline")
+  .addEventListener("click", saveBaseline);
+document
+  .getElementById("clear-baseline")
+  .addEventListener("click", clearBaseline);
 document.getElementById("compare-check").addEventListener("change", (event) => {
   compareMode = event.target.checked;
   chrome.storage.local.set({ compare: compareMode });
@@ -329,14 +341,18 @@ function exportCsv() {
   if (!latestData) return;
   const header = "location,last,avg,best,worst,stdev";
   const lines = latestData.rows.map((r) =>
-    [r.location, r.last, r.avg, r.best, r.wrst, r.stdev].join(",")
+    [r.location, r.last, r.avg, r.best, r.wrst, r.stdev].join(","),
   );
   download("pingsx.csv", "text/csv", [header, ...lines].join("\n"));
 }
 
 function exportJson() {
   if (!latestData) return;
-  download("pingsx.json", "application/json", JSON.stringify(latestData.rows, null, 2));
+  download(
+    "pingsx.json",
+    "application/json",
+    JSON.stringify(latestData.rows, null, 2),
+  );
 }
 
 document.getElementById("refresh").addEventListener("click", requestStats);
@@ -354,7 +370,7 @@ chrome.storage.local.get(
     compareMode = stored.compare;
     setTopCount(stored.topCount, false);
     refreshCompareUI();
-  }
+  },
 );
 
 // Inject only after the message listener is registered, so the content
